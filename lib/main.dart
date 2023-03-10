@@ -56,7 +56,7 @@ class myLoginPage extends StatelessWidget{
               customSizedBox(screenHeight * 0.07),
               customButton(screenHeight: screenHeight, screenWidth: screenWidth),
               customSizedBox(screenHeight * 0.20),
-              TextButton(onPressed: () {}, child: customText(text: "forgot password?", fontsize: 20,color: Colors.black,)),
+              TextButton(onPressed: () {}, child: customText(text: " Create Account", fontsize: 20,color: Colors.black,)),
 
             ],
           ),
