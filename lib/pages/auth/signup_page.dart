@@ -1,6 +1,7 @@
 
 
 
+import 'package:denme/service/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -12,7 +13,7 @@ class SignUpPage extends StatefulWidget{
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-  late String email,password;
+  late String email,password,username,fullname;
 
   final formkey = GlobalKey<FormState>();
   final firebaseauth = FirebaseAuth.instance;
@@ -36,17 +37,21 @@ class _SignUpPageState extends State<SignUpPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                customText(text: "Welcome",fontsize: 40,color: Colors.white,),
+                const customText(text: "Welcome",fontsize: 40,color: Colors.white,),
                 customSizedBox(screenHeight * 0.01),
-                customText(text: "Sign Up to Continue", fontsize: 24,color: Colors.white,),
+                const customText(text: "Sign Up to Continue", fontsize: 24,color: Colors.white,),
                 customSizedBox(screenHeight * 0.01),
                 emailTextField(),
                 customSizedBox(screenHeight * 0.01),
-                passwordTextField("password"),
+                fullnameTextField(),
+                customSizedBox(screenHeight * 0.01),
+                usernameTextfield(),
+                customSizedBox(screenHeight * 0.01),
+                passwordTextField(),
                 customSizedBox(screenHeight * 0.15),
                 signUpButton(screenHeight, screenWidth),
                 customSizedBox(screenHeight * 0.01),
-                TextButton(onPressed: () => Navigator.pushNamed(context, "/loginpage"), child: customText(text: "do you have already an account? Sign In", fontsize: 15, color: Colors.white)),
+                TextButton(onPressed: () => Navigator.pushNamed(context, "/loginpage"), child: const customText(text: "do you have already an account? Sign In", fontsize: 15, color: Colors.white)),
         
         
               ],
@@ -59,6 +64,10 @@ class _SignUpPageState extends State<SignUpPage> {
 
   InkWell signUpButton(double screenHeight, double screenWidth) {
     return InkWell(
+    onTap: () {
+      signUp();
+      Navigator.pushNamed(context, "/loginpage");
+    },
     child: Container(
       height: screenHeight * 0.07,
       width: screenWidth * 0.7,
@@ -66,26 +75,24 @@ class _SignUpPageState extends State<SignUpPage> {
         color: Colors.black,
         borderRadius: BorderRadius.circular(20)
       ),
-      child: Center(child: customText(text: "Sign Up", fontsize: 24, color: Colors.white)),
-    ),
-    onTap: () async {
-      if (formkey.currentState!.validate()) {
-        formkey.currentState!.save();
-        try {
-        var userResult = await firebaseauth.createUserWithEmailAndPassword(email: email, password: password);
-        print(userResult.user!.uid);
-        formkey.currentState!.reset();
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("You have signed up, please log in now")));
-        Navigator.pushNamed(context, "/loginpage");
-        } catch (e) {
-          print(e.toString());
-        }
-      }
-    },
+      child: const Center(child: customText(text: "Sign Up", fontsize: 24, color: Colors.white)),
+    )
   );
   }
 
-  TextFormField passwordTextField(String string) {
+  void signUp() async {
+    try {
+      if(formkey.currentState!.validate()){
+        formkey.currentState!.save();
+        final result = await AuthService().signUp(email, username, fullname, password);
+      }
+    } catch (e) {
+      
+    }
+  }
+    
+
+  TextFormField passwordTextField() {
     return TextFormField(
               validator: (value) {
                 if(value!.isEmpty){
@@ -96,9 +103,43 @@ class _SignUpPageState extends State<SignUpPage> {
                 password = newValue!;
               },
               obscureText: true,
-              style: TextStyle(color: Colors.white),
+              style: const TextStyle(color: Colors.white),
               
-              decoration: CustomInputDecoration(string),
+              decoration: CustomInputDecoration("password"),
+            );
+  }
+
+  TextFormField usernameTextfield() {
+    return TextFormField(
+              validator: (value) {
+                if(value!.isEmpty){
+                  return "please enter your username";
+                }
+              },
+              onSaved: (newValue) {
+                username = newValue!;
+              },
+              
+              style: const TextStyle(color: Colors.white),
+              
+              decoration: CustomInputDecoration("username"),
+            );
+  }
+
+  TextFormField fullnameTextField() {
+    return TextFormField(
+              validator: (value) {
+                if(value!.isEmpty){
+                  return "please enter your full name";
+                }
+              },
+              onSaved: (newValue) {
+                fullname = newValue!;
+              },
+              
+              style: const TextStyle(color: Colors.white),
+              
+              decoration: CustomInputDecoration("full name"),
             );
   }
 
@@ -113,7 +154,7 @@ class _SignUpPageState extends State<SignUpPage> {
               onSaved: (newValue) {
                 email = newValue!;
               },
-              style: TextStyle(color: Colors.white),
+              style: const TextStyle(color: Colors.white),
               decoration: CustomInputDecoration("email"),
             );
   }
@@ -121,14 +162,14 @@ class _SignUpPageState extends State<SignUpPage> {
   InputDecoration CustomInputDecoration(String hinttext) {
     return InputDecoration(
                 
-                enabledBorder: UnderlineInputBorder(
+                enabledBorder: const UnderlineInputBorder(
                   borderSide: BorderSide( color:  Colors.white)
                 ),
-                focusedBorder: UnderlineInputBorder(
+                focusedBorder: const UnderlineInputBorder(
                   borderSide: BorderSide(color: Colors.black)
                 ),
                 hintText: hinttext,
-                hintStyle: TextStyle(color: Colors.white)
+                hintStyle: const TextStyle(color: Colors.white)
               );
   }
 }

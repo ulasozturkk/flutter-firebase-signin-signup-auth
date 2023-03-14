@@ -1,6 +1,7 @@
 import 'package:denme/firebase_options.dart';
 import 'package:denme/pages/auth/signin_page.dart';
 import 'package:denme/pages/auth/signup_page.dart';
+import 'package:denme/pages/home_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
       routes: {
         "/loginpage" :(context) => const myLoginPage(),
         "/signup" :(context) =>  SignUpPage(),
+        "/homepage" :(context) => const HomePage()
 
       },
       home: const myLoginPage(),
